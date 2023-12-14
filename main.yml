@@ -1,12 +1,4 @@
 ---
-- name: Playing k8s-pkg.yml
-  tasks:
-      include_playbook: k8s-pkg.yml
-
-- name: Playing k8s-master.yml
-  tasks:
-      include_playbook: k8s-master.yml
-
-- name: Playing k8s-workers.yml
-  tasks:
-      include_playbook: k8s-workers.yml
+- import_playbook: k8s-pkg.yml
+- import_playbook: k8s-master.yml
+- import_playbook: k8s-workers.yml
