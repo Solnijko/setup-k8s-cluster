@@ -8,23 +8,6 @@
         state: stopped
         enabled: false
 
-    # Or open ports 6443/tcp and 10250/tcp
-    #   - name: Open Port 6443 in Firewalld
-    #   firewalld:
-    #     zone: public
-    #     port: 6443/tcp
-    #     immediate: yes
-    #     permanent: true
-    #     state: enabled
-
-    # - name: Open Port 10250 in Firewalld
-    #   firewalld:
-    #     zone: public
-    #     port: 10250/tcp
-    #     immediate: yes
-    #     permanent: true
-    #     state: enabled
-
    - name: Disable SWAP 
      shell: |
        swapoff -a
