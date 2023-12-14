@@ -1,4 +1,15 @@
 ---
-- import_tasks: k8s-pkg.yml
-- import_tasks: k8s-master.yml
-- import_tasks: k8s-workers.yml
+- name: Вызов плейбука k8s-pkg.yml
+  tasks:
+    - name: Вызов плейбука k8s-pkg.yml
+      include_playbook: k8s-pkg.yml
+
+- name: Вызов плейбука k8s-master.yml
+  tasks:
+    - name: Вызов плейбука k8s-master.yml
+      include_playbook: k8s-master.yml
+
+- name: Вызов плейбука k8s-workers.yml
+  tasks:
+    - name: Вызов плейбука k8s-workers.yml
+      include_playbook: k8s-workers.yml
