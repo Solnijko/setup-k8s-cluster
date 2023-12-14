@@ -1,0 +1,4 @@
+---
+- import_tasks: k8s-pkg.yml
+- import_tasks: k8s-master.yml
+- import_tasks: k8s-workers.yml
