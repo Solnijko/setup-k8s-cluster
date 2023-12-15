@@ -1,0 +1,35 @@
+- name: Install Helm
+  hosts: masters
+  become: true
+
+  tasks:
+    - name: add /usr/local/bin to PATH
+      lineinfile:
+        dest: /etc/environment
+        regexp: '^PATH='
+        line: 'PATH="/usr/local/bin:/usr/bin:/bin"'
+        state: present
+        backup: yes
+      notify: Reload shell
+
+    - name: download Helm
+      get_url:
+        url: "https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz"
+        dest: /tmp/
+
+    - name: unpack tar
+      command:
+        cmd: "tar -zxvf /tmp/helm-v3.12.0-linux-amd64.tar.gz"
+        chdir: /tmp/
+    
+    - name: move helm to /usr/local/bin
+      copy:
+        src: /tmp/linux-amd64/helm
+        dest: /usr/local/bin/helm
+        owner: root
+        group: root
+        mode: '0755'
+
+   handlers:
+    - name: Reload shell
+      shell: source /etc/environment
