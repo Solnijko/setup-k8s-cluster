@@ -22,3 +22,7 @@
       args:
         chdir: $HOME
         creates: pod_network_setup.txt
+
+    - name: install Helm
+      become: yes
+      shell: curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
