@@ -23,7 +23,19 @@
         chdir: $HOME
         creates: pod_network_setup.txt
 
+    - name: download Helm script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        dest: /tmp/get_helm_script.sh
+
+    - name: make the script executable
+      file:
+        path: /tmp/get_helm_script.sh
+        mode: u+x
+
     - name: install Helm
       become: yes
-      get_url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
- 
+      shell: /tmp/get_helm_script.sh
+      args:
+        executable: /bin/bash
+    
