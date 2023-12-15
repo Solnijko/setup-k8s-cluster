@@ -84,16 +84,11 @@
         state: present
         allow_downgrade: yes
 
-- hosts: masters
-  become: yes
-  tasks:
-    - name: add /usr/local/bin to PATH
-      lineinfile:
-        dest: /etc/profile
-        line: 'export PATH="/usr/local/bin:$PATH"'
-        insertafter: EOF
-      environment:
-        PATH: "/usr/local/bin:$PATH"
+  - name: install helm
+     shell: |
+      curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+      chmod 700 get_helm.sh
+      ./get_helm.sh
 
 - hosts: all
   become: yes
