@@ -22,6 +22,15 @@
       args:
         chdir: $HOME
         creates: pod_network_setup.txt
+    
+    - name: add /usr/local/bin to PATH
+      become: yes
+      lineinfile:
+        dest: /etc/profile
+        line: 'export PATH="/usr/local/bin:$PATH"'
+        insertafter: EOF
+      environment:
+        PATH: "/usr/local/bin:$PATH"
 
     - name: install Helm
       become: yes
