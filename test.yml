@@ -30,6 +30,6 @@
         group: root
         mode: '0755'
 
-   handlers:
+  handlers:
     - name: Reload shell
       shell: source /etc/environment
