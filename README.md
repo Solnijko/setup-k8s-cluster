@@ -1,4 +1,4 @@
-# Setup ansible cluster using ansible
+# Setup kubernetes cluster using ansible
 This will setup a kubernetes cluster on Centos7 machines using ansible.
 1. Ansible controller - ansible-controller - 10.0.2.15 - 1 vcpu / 2 gib ram
 2. Kubernetes Master - master - 10.0.2.4- 2 vcpu / 4 gib ram
