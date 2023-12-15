@@ -23,7 +23,7 @@
     
     - name: move helm to /usr/local/bin
       command:
-        cmd: install -o root -g root -m 0755 /tmp/linux-64/helm /usr/local/bin/helm
+        cmd: install -o root -g root -m 0755 /tmp/linux-amd64/helm /usr/local/bin/helm
 
   handlers:
     - name: Reload shell
