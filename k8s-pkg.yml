@@ -84,6 +84,9 @@
         state: present
         allow_downgrade: yes
 
+- hosts: masters
+  become: yes
+  tasks:
     - name: add /usr/local/bin to PATH
       lineinfile:
         dest: /etc/profile
