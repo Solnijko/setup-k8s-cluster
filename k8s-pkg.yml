@@ -83,8 +83,8 @@
         name: kubectl-1.14.0
         state: present
         allow_downgrade: yes
-  - name: add /usr/local/bin to PATH
-      become: yes
+
+    - name: add /usr/local/bin to PATH
       lineinfile:
         dest: /etc/profile
         line: 'export PATH="/usr/local/bin:$PATH"'
