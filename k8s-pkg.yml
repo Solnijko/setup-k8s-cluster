@@ -1,4 +1,4 @@
-- hosts: masters
+- hosts: all
   become: yes
   tasks:
     - name: Run yum update
