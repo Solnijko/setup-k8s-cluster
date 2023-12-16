@@ -157,9 +157,3 @@
         ansible_shell_env:
           KUBECONFIG: ~/.kube/config
 
-    - name: Get nodes
-      command: kubectl get nodes
-      register: nodes_output
-
-    - debug:
-        var: nodes_output.stdout_lines
