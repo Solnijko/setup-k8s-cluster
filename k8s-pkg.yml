@@ -149,16 +149,17 @@
     - name: Set ownership of .kube/config
       file:
         path: "~/.kube/config"
-        owner: "root:root"
+        owner: "root"
         mode: '0600'
-
+    
     - name: Export KUBECONFIG
       set_fact:
         ansible_shell_env:
           KUBECONFIG: ~/.kube/config
 
     - name: Get nodes
-      k8s_info:
-        resource: node
-        kubeconfig: /etc/kubernetes/admin.conf
-        all_namespaces: true
+      command: kubectl get nodes
+      register: nodes_output
+
+    - debug:
+        var: nodes_output.stdout_lines
