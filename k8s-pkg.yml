@@ -136,26 +136,26 @@
 
     - name: Create .kube directory
       file:
-        path: "{{ ansible_env.HOME }}/.kube"
+        path: "~/.kube"
         state: directory
 
     - name: Copy admin.conf to .kube/config
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: "{{ ansible_env.HOME }}/.kube/config"
+        dest: "~/.kube/config"
         remote_src: yes
         mode: '0644'
 
     - name: Set ownership of .kube/config
       file:
-        path: "{{ ansible_env.HOME }}/.kube/config"
-        owner: "{{ ansible_user_uid }}:{{ ansible_user_gid }}"
+        path: "~/.kube/config"
+        owner: "root:root"
         mode: '0600'
 
     - name: Export KUBECONFIG
       set_fact:
         ansible_shell_env:
-          KUBECONFIG: /etc/kubernetes/admin.conf
+          KUBECONFIG: ~/.kube/config
 
     - name: Get nodes
       k8s_info:
