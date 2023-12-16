@@ -1,85 +1,160 @@
 - hosts: all
   become: yes
   tasks:
-
-   - name: Configure firewalld
+    - name: Update packages
+      yum:
+        name: "*"
+        state: latest
+  
+    - name: Configure firewalld
       shell: |
-       firewall-cmd --permanent --add-port=6443/tcp
-       firewall-cmd --permanent --add-port=2379-2380/tcp
-       firewall-cmd --permanent --add-port=10250-10255/tcp
-       firewall-cmd --permanent --add-port=30000-32767/tcp
-       firewall-cmd --reload
-       modprobe br_netfilter
+        firewall-cmd --permanent --add-port=6443/tcp
+        firewall-cmd --permanent --add-port=2379-2380/tcp
+        firewall-cmd --permanent --add-port=10250-10255/tcp
+        firewall-cmd --permanent --add-port=30000-32767/tcp
+        firewall-cmd --reload
+        modprobe br_netfilter
 
-   - name: update iptable settings
-     shell: |
-       cat <<EOF > /etc/sysctl.d/k8s.conf
-       net.bridge.bridge-nf-call-ip6tables = 1
-       net.bridge.bridge-nf-call-iptables = 1
-       EOF
-       sysctl --system
+    - name: Update iptable settings
+      shell: |
+        cat <<EOF > /etc/sysctl.d/k8s.conf
+        net.bridge.bridge-nf-call-ip6tables = 1
+        net.bridge.bridge-nf-call-iptables = 1
+        EOF
+        sysctl --system
 
-   - name: Disable SWAP 
-     shell: |
-       swapoff -a
-
-   - name: Disable SWAP in fstab 
-     lineinfile:
-       path: /etc/fstab
-       regexp: 'swap'
-       state: absent
-
-   - name: install Docker
-     yum:
-       name: docker
-       state: present
-       update_cache: true
-
-   - name: start Docker
-     service:
-       name: docker
-       state: started
-       enabled: true
-
-   - name: disable SELinux
-     command: setenforce 0
-     ignore_errors: yes
-
-   - name: disable SELinux on reboot
-     selinux:
-       state: disabled
-
-   - name: add Kubernetes YUM repository
-     yum_repository:
-      name: Kubernetes
-      description: Kubernetes YUM repository
-      baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-      gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-      gpgcheck: yes
-
-   - name: install kubelet
-     yum:
-        name: kubelet
+    - name: Change SELinux config in /etc/selinux/config
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: '^SELINUX='
+        line: 'SELINUX=disabled'
         state: present
-        update_cache: true
 
-   - name: install kubeadm
-     yum:
+    - name: Disable SELinux during runtime
+      command: setenforce 0
+
+    - name: Reboot
+      reboot:
+
+    - name: Create k8s.conf in /etc/sysctl.d/k8s.conf
+      blockinfile:
+        path: /etc/sysctl.d/k8s.conf
+        block: |
+          net.bridge.bridge-nf-call-ip6tables = 1
+          net.bridge.bridge-nf-call-iptables = 1
+        create: yes
+
+    - name: Apply sysctl settings
+      command: sysctl --system
+
+    - name: Disable SWAP 
+      shell: |
+        swapoff -a
+
+    - name: Disable SWAP in fstab 
+      lineinfile:
+        path: /etc/fstab
+        regexp: 'swap'
+        state: absent
+    
+    - name: Remove old docker if already installed
+      yum:
+        name:
+          - docker
+          - docker-client
+          - docker-client-latest
+          - docker-common
+          - docker-latest
+          - docker-latest-logrotate
+          - docker-logrotate
+          - docker-engine
+        state: removed
+    
+    - name: Install yum utilities
+      yum:
+        name: yum-utils
+        state: installed
+
+    - name: Add CentOS Docker repository
+      command: >
+        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+    - name: Install Docker packages
+      yum:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+          - git
+          - wget
+        state: present
+
+    - name: Enable and start Docker service
+      service:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Enable and start containerd service
+      service:
+        name: containerd
+        enabled: yes
+        state: started
+
+    - name: Add Kubernetes YUM repository
+      yum_repository:
+        name: Kubernetes
+        description: Kubernetes YUM repository
+        baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+        enabled: yes
+        gpgcheck: yes
+        repo_gpgcheck: yes
+        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    
+    - name: Install Kubeadm
+      yum:
         name: kubeadm
-        state: present
+        state: installed
 
-   - name: start kubelet
-     service:
-       name: kubelet
-       enabled: yes
-       state: started
+    - name: Remove containerd config /etc/containerd/config.toml
+      file:
+        path: /etc/containerd/config.toml
+        state: absent
 
-- hosts: masters
-  become: yes
-  tasks:
-   - name: install kubectl
-     yum:
-        name: kubectl
-        state: present
-        allow_downgrade: yes
+    - name: Restart containerd
+      service:
+        name: containerd
+        state: restarted
 
+    - name: Initialize kubeadm
+      command: kubeadm init
+
+    - name: Create .kube directory
+      file:
+        path: "{{ ansible_env.HOME }}/.kube"
+        state: directory
+
+    - name: Copy admin.conf to .kube/config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: "{{ ansible_env.HOME }}/.kube/config"
+        remote_src: yes
+        mode: '0644'
+
+    - name: Set ownership of .kube/config
+      file:
+        path: "{{ ansible_env.HOME }}/.kube/config"
+        owner: "{{ ansible_user_uid }}:{{ ansible_user_gid }}"
+        mode: '0600'
+
+    - name: Export KUBECONFIG
+      set_fact:
+        ansible_shell_env:
+          KUBECONFIG: /etc/kubernetes/admin.conf
+
+    - name: Get nodes
+      community.kubernetes.k8s_info:
+        resource: node
+        kubeconfig: /etc/kubernetes/admin.conf
+        all_namespaces: true
