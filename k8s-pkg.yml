@@ -133,6 +133,10 @@
 
     - name: Initialize kubeadm
       command: kubeadm init
+      register: kubeadm_output
+
+    - debug:
+        var: kubeadm_output.stdout_lines
 
     - name: Create .kube directory
       file:
