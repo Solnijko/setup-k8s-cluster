@@ -27,3 +27,6 @@
 
     - name: Get nodes
       command: kubectl get nodes
+      register: nodes_output
+      debug:
+        var: nodes_output.stdout
