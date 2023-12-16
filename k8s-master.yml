@@ -1,9 +1,6 @@
 - hosts: masters
   become: yes
   tasks:
-    - name: initialize K8S cluster
-      shell: kubeadm init --pod-network-cidr=172.16.0.0/16 --apiserver-advertise-address=10.0.2.4
-
     - name: Initialize kubeadm
       command: kubeadm init
       register: kubeadm_output
