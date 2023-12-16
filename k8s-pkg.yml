@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: masters
   become: yes
   tasks:
     - name: Run yum update
@@ -10,7 +10,7 @@
         autoremove: yes
         update_only: yes
         security: yes
-        
+
     - name: Change SELinux config in /etc/selinux/config
       lineinfile:
         path: /etc/selinux/config
