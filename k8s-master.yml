@@ -4,21 +4,32 @@
     - name: initialize K8S cluster
       shell: kubeadm init --pod-network-cidr=172.16.0.0/16 --apiserver-advertise-address=10.0.2.4
 
-    - name: create .kube directory
-      file:
-        path: $HOME/.kube
-        state: directory
-        mode: 0755
+    - name: Initialize kubeadm
+      command: kubeadm init
+      register: kubeadm_output
 
-    - name: copy admin.conf to user kube config
+    - debug:
+        var: kubeadm_output.stdout_lines
+
+    - name: Create .kube directory
+      file:
+        path: "~/.kube"
+        state: directory
+
+    - name: Copy admin.conf to .kube/config
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: /root/.kube/config
+        dest: "~/.kube/config"
         remote_src: yes
+        mode: '0644'
 
-    - name: install Pod network
-      become: yes
-      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml >> pod_network_setup.txt
-      args:
-        chdir: $HOME
-        creates: pod_network_setup.txt
+    - name: Set ownership of .kube/config
+      file:
+        path: "~/.kube/config"
+        owner: "root"
+        mode: '0600'
+    
+    - name: Export KUBECONFIG
+      set_fact:
+        ansible_shell_env:
+          KUBECONFIG: ~/.kube/config

@@ -131,33 +131,4 @@
         name: containerd
         state: restarted
 
-    - name: Initialize kubeadm
-      command: kubeadm init
-      register: kubeadm_output
-
-    - debug:
-        var: kubeadm_output.stdout_lines
-
-    - name: Create .kube directory
-      file:
-        path: "~/.kube"
-        state: directory
-
-    - name: Copy admin.conf to .kube/config
-      copy:
-        src: /etc/kubernetes/admin.conf
-        dest: "~/.kube/config"
-        remote_src: yes
-        mode: '0644'
-
-    - name: Set ownership of .kube/config
-      file:
-        path: "~/.kube/config"
-        owner: "root"
-        mode: '0600'
-    
-    - name: Export KUBECONFIG
-      set_fact:
-        ansible_shell_env:
-          KUBECONFIG: ~/.kube/config
 
