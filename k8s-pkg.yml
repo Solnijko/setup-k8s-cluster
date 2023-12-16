@@ -16,8 +16,9 @@
         line: 'SELINUX=disabled'
         state: present
 
-    - name: Disable SELinux during runtime
+    - name: Disable SELinux during runtime if not disabled
       command: setenforce 0
+      ignore_errors: yes
 
     - name: Reboot
       reboot:
