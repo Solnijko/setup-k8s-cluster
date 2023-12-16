@@ -26,7 +26,4 @@
           KUBECONFIG: ~/.kube/config
 
     - name: Get nodes
-      k8s_info:
-        resource: node
-        kubeconfig: /etc/kubernetes/admin.conf
-        all_namespaces: true
+      command: kubectl get nodes
