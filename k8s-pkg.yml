@@ -154,7 +154,7 @@
           KUBECONFIG: /etc/kubernetes/admin.conf
 
     - name: Get nodes
-      community.kubernetes.k8s_info:
+      k8s_info:
         resource: node
         kubeconfig: /etc/kubernetes/admin.conf
         all_namespaces: true
