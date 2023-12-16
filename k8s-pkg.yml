@@ -7,9 +7,7 @@
         state: latest
         update_cache: yes
         disable_gpg_check: yes
-        autoremove: yes
         update_only: yes
-        security: yes
 
     - name: Change SELinux config in /etc/selinux/config
       lineinfile:
