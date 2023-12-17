@@ -32,4 +32,4 @@
           KUBECONFIG: ~/.kube/config
     
     - name: Initialize CNI config
-      command: kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+      command: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
