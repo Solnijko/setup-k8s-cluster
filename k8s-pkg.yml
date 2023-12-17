@@ -132,7 +132,8 @@
         state: restarted
 
     - name: Enable and start kubelet
-      service: kubelet
-      enabled: yes
-      state: started
+      service: 
+        name: kubelet
+        enabled: yes
+        state: started
 
