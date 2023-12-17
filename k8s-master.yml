@@ -31,5 +31,11 @@
         ansible_shell_env:
           KUBECONFIG: ~/.kube/config
     
+    - name: Enable and start kubelet
+      service: 
+        name: kubelet
+        enabled: yes
+        state: started
+    
     - name: Initialize CNI config
       command: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml

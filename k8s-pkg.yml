@@ -131,9 +131,5 @@
         name: containerd
         state: restarted
 
-    - name: Enable and start kubelet
-      service: 
-        name: kubelet
-        enabled: yes
-        state: started
+
 
