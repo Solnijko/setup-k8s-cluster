@@ -25,6 +25,9 @@
       command:
         cmd: install -o root -g root -m 0755 /tmp/linux-amd64/helm /usr/local/bin/helm
 
+    - name: add stable helm repo
+      command:
+        cmd: helm repo add stable https://charts.helm.sh/stable
   handlers:
     - name: Reload shell
       shell: source /etc/environment
