@@ -14,12 +14,6 @@
 - hosts: workers
   become: yes
   tasks:
-    - name: Enable and start kubelet
-      service: 
-        name: kubelet
-        enabled: yes
-        state: started
-
     - name: join cluster
       shell: "{{ hostvars['master'].join_command }} --ignore-preflight-errors all  >> node_joined.txt"
       args:
