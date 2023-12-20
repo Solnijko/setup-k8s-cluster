@@ -1,18 +1,12 @@
 - hosts: masters
   become: yes
   tasks:
-    - name: Set variables
-      shell: |
-        MASTER_PRIVATE_IP=$(ip addr show enp0s3 | awk '/inet / {print $2}' | cut -d/ -f1)
-        NODENAME=$(hostname -s)
-        POD_CIDR="172.16.10.0/16" 
-
     - name: Pull config images
       shell: |
         kubeadm config images pull
 
     - name: Initialize kubeadm
-      command: kubeadm init --apiserver-advertise-address="$MASTER_PRIVATE_IP" --apiserver-cert-extra-sans="$MASTER_PRIVATE_IP" --pod-network-cidr="$POD_CIDR" --node-name "$NODENAME" --ignore-preflight-errors Swap
+      command: kubeadm init --apiserver-advertise-address="10.0.2.4" --apiserver-cert-extra-sans="10.0.2.4" --pod-network-cidr="172.16.10.0/16" --node-name "master-node" --ignore-preflight-errors Swap
 
     - name: Create .kube directory
       file:
