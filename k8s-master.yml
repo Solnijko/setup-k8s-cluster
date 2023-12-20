@@ -37,7 +37,31 @@
         enabled: yes
         state: started
     
-    - import_playbook: install-helm.yml
+    - name: add /usr/local/bin to PATH
+          lineinfile:
+            dest: /etc/environment
+            regexp: '^PATH='
+            line: 'PATH="/usr/local/bin:/usr/bin:/bin"'
+            state: present
+            backup: yes
+          notify: Reload shell
+
+    - name: download Helm
+      get_url:
+        url: "https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz"
+        dest: /tmp/
+        validate_certs: no
+
+    - name: unpack tar
+      shell: tar -zxvf /tmp/helm-v3.12.0-linux-amd64.tar.gz -C /tmp/
+    
+    - name: move helm to /usr/local/bin
+      command:
+        cmd: install -o root -g root -m 0755 /tmp/linux-amd64/helm /usr/local/bin/helm
+
+    - name: install nginx-controller
+      command:
+        cmd: helm install my-release oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.1.0
             
     - name: Install CNI network plugins binaries
       command: |
@@ -52,3 +76,6 @@
         helm repo add flannel https://flannel-io.github.io/flannel/
         helm install flannel --set podCidr="172.16.10.0/16" --namespace kube-flannel flannel/flannel
         
+  handlers:
+  - name: Reload shell
+    shell: source /etc/environment
