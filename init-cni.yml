@@ -1,11 +1,15 @@
 - hosts: masters
   become: yes
   tasks:
+    - name: Download CNI plugins binaries
+      get_url:
+        url: "https://github.com/containernetworking/plugins/releases/download/v1.2.0/cni-plugins-linux-amd64-v1.2.0.tgz"
+        dest: "./cni-plugins-linux-amd64-v1.2.0.tgz"
+
     - name: Install CNI network plugins binaries
       command: |
         mkdir -p /opt/cni/bin
-        curl -O -L https://github.com/containernetworking/plugins/releases/download/v1.2.0/cni-plugins-linux-amd64-v1.2.0.tgz
-        tar -C /opt/cni/bin -xzf cni-plugins-linux-amd64-v1.2.0.tgz
+        tar -C /opt/cni/bin -xzf ./cni-plugins-linux-amd64-v1.2.0.tgz
 
     - name: Apply flannel CNI
       command: |
