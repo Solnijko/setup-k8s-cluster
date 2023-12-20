@@ -1,7 +1,6 @@
 - name: Install Helm
   hosts: masters
   become: true
-
   tasks:
     - name: add /usr/local/bin to PATH
       lineinfile:
