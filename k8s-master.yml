@@ -1,28 +1,6 @@
 - hosts: masters
   become: yes
-  tasks:
-      
-    - name: Enable and start kubelet
-      service: 
-        name: kubelet
-        enabled: yes
-        state: started
-      
-    - name: Install Kubeadm
-      yum:
-        name: kubeadm
-        state: installed
-
-    - name: Remove containerd config /etc/containerd/config.toml
-      file:
-        path: /etc/containerd/config.toml
-        state: absent
-
-    - name: Restart containerd
-      service:
-        name: containerd
-        state: restarted
-
+  tasks:     
     - name: Get MASTER_PRIVATE_IP
       shell: ip addr show enp0s3 | awk '/inet / {print $2}' | cut -d/ -f1
       register: MASTER_PRIVATE_IP_raw

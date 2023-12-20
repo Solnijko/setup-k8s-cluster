@@ -130,6 +130,25 @@
         repo_gpgcheck: yes
         gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 
+    - name: Install Kubeadm
+      yum:
+        name: kubeadm
+        state: installed
 
+    - name: Remove containerd config /etc/containerd/config.toml
+      file:
+        path: /etc/containerd/config.toml
+        state: absent
+
+    - name: Restart containerd
+      service:
+        name: containerd
+        state: restarted
+
+    - name: Enable and start kubelet
+      service: 
+        name: kubelet
+        enabled: yes
+        state: started
 
 
