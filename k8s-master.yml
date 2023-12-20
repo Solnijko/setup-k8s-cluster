@@ -27,7 +27,7 @@
         kubeadm config images pull
 
     - name: Initialize kubeadm
-      command: kubeadm init --apiserver-advertise-address="MASTER_PRIVATE_IP" --apiserver-cert-extra-sans="MASTER_PRIVATE_IP" --pod-network-cidr="$POD_CIDR" --node-name "$NODENAME" --ignore-preflight-errors Swap
+      command: kubeadm init --apiserver-advertise-address="$MASTER_PRIVATE_IP" --apiserver-cert-extra-sans="$MASTER_PRIVATE_IP" --pod-network-cidr="$POD_CIDR" --node-name "$NODENAME" --ignore-preflight-errors Swap
 
     - name: Create .kube directory
       file:
