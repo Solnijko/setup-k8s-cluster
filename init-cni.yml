@@ -5,11 +5,15 @@
       get_url:
         url: "https://github.com/containernetworking/plugins/releases/download/v1.2.0/cni-plugins-linux-amd64-v1.2.0.tgz"
         dest: "./cni-plugins-linux-amd64-v1.2.0.tgz"
+    
+    - name: Create /opt/cni/bin directory
+      file:
+        state: directory
+        path: /opt/cni/bin
+        mode: '0755'
 
     - name: Install CNI network plugins binaries
-      command: |
-        mkdir -p /opt/cni/bin
-        tar -C /opt/cni/bin -xzf ./cni-plugins-linux-amd64-v1.2.0.tgz
+      command: tar -C /opt/cni/bin -xzf ./cni-plugins-linux-amd64-v1.2.0.tgz
 
     - name: Apply flannel CNI
       command: |
