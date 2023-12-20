@@ -37,5 +37,12 @@
         enabled: yes
         state: started
     
+    - name: Allow HTTP Traffic
+      shell: |
+        firewall-cmd --permanent --add-port 80/tcp
+        firewall-cmd --permanent --add-port 8001/tcp
+        firewall-cmd --permanent --add-port 8080/tcp
+
+        
     - name: Initialize CNI config
       command: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
