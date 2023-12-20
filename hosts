@@ -3,6 +3,3 @@ master
 
 [workers]
 worker1
-
-[load_balancers]
-load_balancer1
