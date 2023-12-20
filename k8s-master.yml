@@ -1,6 +1,12 @@
 - hosts: masters
   become: yes
   tasks:
+    - name: Set variables
+      environment:
+        MASTER_PRIVATE_IP: (ip addr show enp0s3 | awk '/inet / {print $2}' | cut -d/ -f1)
+        NODENAME: (hostname -s)
+        POD_CIDR: "172.16.10.0/16" 
+
     - name: Pull config images
       shell: |
         kubeadm config images pull
