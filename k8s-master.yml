@@ -7,7 +7,7 @@
         line:  "export MASTER_PRIVATE_IP=$(ip addr show enp0s3 | awk '/inet / {print $2}' | cut -d/ -f1)"
         state: present
         insertafter: EOF
-        validate: 'source ~/.bashrc'
+        validate: "source ~/.bashrc; echo OK"
 
     - name: Set NODENAME variable
       lineinfile:
@@ -15,7 +15,7 @@
         line: 'export NODENAME=$(hostname -s)'
         state: present
         insertafter: EOF
-        validate: 'source ~/.bashrc'
+        validate: "source ~/.bashrc; echo OK"
 
     - name: Set POD_CIDR variable
       lineinfile:
@@ -23,7 +23,7 @@
         line: 'export POD_CIDR="172.16.10.0/16"'
         state: present
         insertafter: EOF
-        validate: 'source ~/.bashrc'
+        validate: "source ~/.bashrc; echo OK"
 
     - name: Pull config images
       shell: |
