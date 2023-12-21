@@ -1,7 +1,7 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Run yum update
+    - name: Update yum packages
       ansible.builtin.yum:
         name: "*"
         state: latest
@@ -9,7 +9,7 @@
         disable_gpg_check: yes
         update_only: yes
 
-    - name: Change SELinux config in /etc/selinux/config
+    - name: Disable SELinux in /etc/selinux/config
       lineinfile:
         path: /etc/selinux/config
         regexp: '^SELINUX='
@@ -89,7 +89,7 @@
         regexp: 'swap'
         state: absent
     
-    - name: Remove old docker if already installed
+    - name: Remove old docker if installed
       yum:
         name:
           - docker
@@ -102,16 +102,16 @@
           - docker-engine
         state: removed
     
-    - name: Install yum utilities
+    - name: Install yum-utils
       yum:
         name: yum-utils
         state: installed
 
-    - name: Add CentOS Docker repository
+    - name: Add Docker repository
       command: >
         yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
-    - name: Install Docker packages
+    - name: Install Docker, containerd, git and wget packages
       yum:
         name:
           - docker-ce
@@ -134,7 +134,7 @@
         enabled: yes
         state: started
 
-    - name: Add Kubernetes YUM repository
+    - name: Add Kubernetes yum repository
       yum_repository:
         name: Kubernetes
         description: Kubernetes YUM repository
@@ -148,7 +148,7 @@
       yum:
         name: kubeadm
         state: installed
-
+    
     - name: Remove containerd config /etc/containerd/config.toml
       file:
         path: /etc/containerd/config.toml
