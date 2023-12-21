@@ -95,7 +95,7 @@
 
     - name: Copy cni.kubeconfig to /etc/cni/net.d/calico-kubeconfig
       copy:
-        src: path/to/cni.kubeconfig
+        src: ./cni.kubeconfig
         dest: /etc/cni/net.d/calico-kubeconfig
         mode: '0644'
 
