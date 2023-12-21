@@ -41,8 +41,7 @@
         firewall-cmd --permanent --add-port 51820/udp
         firewall-cmd --permanent --add-port 51821/udp
         firewall-cmd --permanent --add-port 80/tcp
-        firewall-cmd --permanent --add-port 8001/tcp
-        firewall-cmd --permanent --add-port 8080-8090/tcp
+        firewall-cmd --permanent --add-port 8000-8999/tcp
         firewall-cmd --reload
         modprobe br_netfilter
 
