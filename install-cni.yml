@@ -39,8 +39,8 @@
   tasks: 
     - name: Fetch cni.kubeconfig from master
       fetch:
-        src: ./cni.kubeconfig
-        dest: ./cni.kubeconfig
+        src: cni.kubeconfig
+        dest: cni.kubeconfig
         flat: yes
       delegate_to: master
 
