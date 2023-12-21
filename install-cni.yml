@@ -1,145 +1,24 @@
-
-
-
-# - name: Install calicoctl
-#   hosts: masters 
-#   become: yes
-#   tasks:
-#     - name: Download calicoctl
-#       get_url:
-#         url: "https://github.com/projectcalico/calico/releases/download/v3.27.0/calicoctl-linux-amd64"
-#         dest: /usr/local/bin/
-#         validate_certs: no  
-
-#     - name: Change permissions on calicoctl
-#       file:
-#         path: /usr/local/bin/calicoctl
-#         mode: '0755'   
-
-# - name: Provision Kubernetes user account for the plugin
-#   hosts: masters
-#   become: yes
-#   tasks:
-#     - name: Create CNI plugin authentication key
-#       shell: |
-#         openssl req -newkey rsa:4096 \
-#           -keyout cni.key \
-#           -nodes \
-#           -out cni.csr \
-#           -subj "/CN=calico-cni"
+- name: Configure CNI network
+  hosts: masters
+  become: yes
+  tasks:
+    - name: Download calico.conf
+      get_url:
+        url: "https://raw.githubusercontent.com/Solnijko/kubernetes-configs/main/calico.conf"
+        dest: /etc/NetworkManager/conf.d/
+        validate_certs: no
     
-#     - name: Create CSI for CNI plugin
-#       shell: |
-#         openssl x509 -req -in cni.csr \
-#             -CA /etc/kubernetes/pki/ca.crt \
-#             -CAkey /etc/kubernetes/pki/ca.key \
-#             -CAcreateserial \
-#             -out cni.crt \
-#             -days 365
-#         chown $(id -u):$(id -g) cni.crt
-
-#     - name: Get APISERVER URL
-#       command: kubectl config view -o jsonpath='{.clusters[0].cluster.server}'
-#       register: apiserver_output
-
-#     - name: Set cluster configuration
-#       command: kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.crt --embed-certs=true --server={{ apiserver_output.stdout }} --kubeconfig=cni.kubeconfig
-
-#     - name: Set credentials
-#       command: kubectl config set-credentials calico-cni --client-certificate=cni.crt --client-key=cni.key --embed-certs=true --kubeconfig=cni.kubeconfig
-
-#     - name: Set context
-#       command: kubectl config set-context default --cluster=kubernetes --user=calico-cni --kubeconfig=cni.kubeconfig
-
-#     - name: Set the default context for kubectl cli
-#       shell: |
-#         kubectl config use-context default --kubeconfig=cni.kubeconfig
-
-# - name: Copy cni.kubeconfig to workers
-#   hosts: workers
-#   become: yes
-#   tasks: 
-#     - name: Fetch cni.kubeconfig from master
-#       fetch:
-#         src: cni.kubeconfig
-#         dest: cni.kubeconfig
-#         flat: yes
-#       delegate_to: master
-
-# - name: Provision RBAC 
-#   hosts: masters
-#   tasks:
-#     - name: Download CNI role configuration
-#       get_url:
-#         url: "https://raw.githubusercontent.com/Solnijko/kubernetes-configs/main/cni-role.yml"
-#         dest: /tmp/
-#         validate_certs: no
-
-#     - name: Define a cluster role for CNI plugin to access Kubernetes
-#       shell: |
-#         kubectl apply -f /tmp/cni-role.yml
-     
-#     - name: Bind the cluster role to the calico-cni account
-#       shell: |
-#         kubectl create clusterrolebinding calico-cni --clusterrole=calico-cni --user=calico-cni
-
-# - name: Install CNI plugin
-#   hosts: all
-#   become: yes
-#   tasks:
-#     - name: Install the calico binariy
-#       get_url:
-#         url: "https://github.com/projectcalico/cni-plugin/releases/download/v3.14.0/calico-amd64"
-#         dest: /opt/cni/bin/calico 
-#         validate_certs: no 
-
-#     - name: Change permissions of calico binary
-#       file:
-#         path: /opt/cni/bin/calico
-#         mode: '0755'
-
-#     - name: Install the calico-ipam binariy
-#       get_url:
-#         url: "https://github.com/projectcalico/cni-plugin/releases/download/v3.14.0/calico-ipam-amd64"
-#         dest: /opt/cni/bin/calico-ipam
-#         validate_certs: no 
-        
-#     - name: Change permissions of calico binary
-#       file:
-#         path: /opt/cni/bin/calico-ipam
-#         mode: '0755'
+    - name: Install the Tigera Calico operator and custom resource definitions
+      shell: |
+        kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
     
-#     - name: Create /etc/cni/net.d
-#       file:
-#         path: /etc/cni/net.d
-#         state: directory
-#         mode: '0755'
-
-#     - name: Copy cni.kubeconfig to /etc/cni/net.d/calico-kubeconfig
-#       copy:
-#         src: ./cni.kubeconfig
-#         dest: /etc/cni/net.d/calico-kubeconfig
-#         mode: '0644'
-
-#     - name: Change permissions of calico-kubeconfig
-#       file:
-#         path: /etc/cni/net.d/calico-kubeconfig
-#         mode: '0600'
-
-# - name: Calico network plugin
-#   hosts: masters
-#   become: yes
-#   tasks:
-#     - name: Install calico network plugin
-#       shell: |
-#         kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
+    - name: Apply custom resources
+      shell: |
+        kubectl create -f https://raw.githubusercontent.com/Solnijko/kubernetes-configs/main/custom-resources.yml
+    
+    - name: Remove taints from the control node
+      shell: |
+        kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+        kubectl taint nodes --all node-role.kubernetes.io/master-
+    
       
-#     - name: Download custom resources config
-#       get_url:
-#         url: "https://raw.githubusercontent.com/Solnijko/kubernetes-configs/main/custom-resources.yml"
-#         dest: /tmp/
-#         validate_certs: no
-
-#     - name: Apply custom resources
-#       shell: |
-#         kubectl create -f /tmp/custom-resources.yml
