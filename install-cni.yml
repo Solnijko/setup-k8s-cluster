@@ -44,6 +44,14 @@
         flat: yes
       delegate_to: master
 
+- name: Apply cni.kubeconfig
+  hosts: all
+  become: yes
+  tasks:
+    - name: Apply config
+      shell: |
+        kubectl config use-context default --kubeconfig=cni.kubeconfig
+
 - name: Provision RBAC 
   hosts: masters
   tasks:

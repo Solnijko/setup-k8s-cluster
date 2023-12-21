@@ -69,16 +69,12 @@
         create: yes
     
     - name: Add static route for pods CIDR range
-      lineinfile:
-        path: /etc/network/interfaces
-        line: "up ip route add 172.16.10.0/16 via 10.0.2.1"
-        state: present
+      shell: |
+        nmcli connection modify enp0s3 +ipv4.routes "172.16.10.0/16 10.0.2.1"
 
-    - name: Add static route for CIDR subnet
-      lineinfile:
-        path: /etc/network/interfaces
-        line: "up ip route add 10.96.0.0/12 via 10.0.2.1"
-        state: present
+    - name: Add static route for service CIDR subnet
+      shell: |
+        nmcli connection modify enp0s3 +ipv4.routes "10.96.0.0/12 10.0.2.1"
 
     - name: Apply sysctl settings
       command: sysctl --system
