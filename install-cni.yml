@@ -20,29 +20,18 @@
             -days 365
         chown $(id -u):$(id -g) cni.crt
 
-    - name: Create kubeconfig file for CNI plugin (1)
-      shell: |
-        APISERVER=$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}')
-        kubectl config set-cluster kubernetes \
-          --certificate-authority=/etc/kubernetes/pki/ca.crt \
-          --embed-certs=true \
-          --server=$APISERVER \
-          --kubeconfig=cni.kubeconfig
+    - name: Get APISERVER URL
+      command: kubectl config view -o jsonpath='{.clusters[0].cluster.server}'
+      register: apiserver_output
 
-    - name: Create kubeconfig file for CNI plugin (2)
-      shell: |
-        kubectl config set-credentials calico-cni \
-          --client-certificate=cni.crt \
-          --client-key=cni.key \
-          --embed-certs=true \
-          --kubeconfig=cni.kubeconfig
-        
-    - name: Create kubeconfig file for CNI plugin (3)
-      shell: |
-        kubectl config set-context default \
-          --cluster=kubernetes \
-          --user=calico-cni \
-          --kubeconfig=cni.kubeconfig
+    - name: Set cluster configuration
+      command: kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.crt --embed-certs=true --server={{ apiserver_output.stdout }} --kubeconfig=cni.kubeconfig
+
+    - name: Set credentials
+      command: kubectl config set-credentials calico-cni --client-certificate=cni.crt --client-key=cni.key --embed-certs=true --kubeconfig=cni.kubeconfig
+
+    - name: Set context
+      command: kubectl config s
 ---
 
 - name: Copy cni.kubeconfig to workers
