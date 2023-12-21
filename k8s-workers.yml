@@ -1,4 +1,5 @@
-- hosts: master
+- name: Join worker nodes to cluster
+  hosts: master
   become: yes
   gather_facts: false
   tasks:
