@@ -1,5 +1,5 @@
 - name: Prepare k8s cluster
-  hosts: all
+  hosts: workers
   become: yes
   tasks:
     - name: Update yum packages
