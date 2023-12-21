@@ -33,7 +33,7 @@
     - name: Set context
       command: kubectl config set-context default --cluster=kubernetes --user=calico-cni --kubeconfig=cni.kubeconfig
 
-    - name: Aset the default context for kubectl cli
+    - name: Set the default context for kubectl cli
       shell: |
         kubectl config use-context default --kubeconfig=cni.kubeconfig
 
