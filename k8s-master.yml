@@ -34,18 +34,22 @@
         src: /etc/kubernetes/admin.conf
         dest: "~/.kube/config"
         remote_src: yes
-        mode: '0644'
-
-    - name: Set ownership of .kube/config
-      file:
-        path: "~/.kube/config"
-        owner: "root"
-        mode: '0600'
+        mode: '0700'
     
-    - name: Export KUBECONFIG
-      set_fact:
-        ansible_shell_env:
-          KUBECONFIG: ~/.kube/config
+    - name: Add KUBECONFIG to ~/.bashrc
+        lineinfile:
+          dest: ~/.bashrc
+          line: "export KUBECONFIG=~/.kube/config"
+          insertafter: EOF
+          state: present
+          create: yes
+          
+    - name: Set KUBECONFIG for the current shell session
+      shell: export KUBECONFIG=~/.kube/config
+    
+    - name: Taint master node for scheduling apps
+      shell: |
+        kubectl taint nodes --all node-role.kubernetes.io/control-plane-
   
     - name: Download metrics server config
       get_url:
