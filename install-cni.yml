@@ -33,6 +33,10 @@
     - name: Set context
       command: kubectl config set-context default --cluster=kubernetes --user=calico-cni --kubeconfig=cni.kubeconfig
 
+    - name: Aset the default context for kubectl cli
+      shell: |
+        kubectl config use-context default --kubeconfig=cni.kubeconfig
+
 - name: Copy cni.kubeconfig to workers
   hosts: workers
   become: yes
@@ -43,14 +47,6 @@
         dest: cni.kubeconfig
         flat: yes
       delegate_to: master
-
-- name: Apply cni.kubeconfig
-  hosts: all
-  become: yes
-  tasks:
-    - name: Apply config
-      shell: |
-        kubectl config use-context default --kubeconfig=cni.kubeconfig
 
 - name: Provision RBAC 
   hosts: masters
