@@ -120,4 +120,4 @@
 
     - name: Apply custom resources
       shell: |
-        kubectl create -f /tmp/custom-resources.yaml
+        kubectl create -f /tmp/custom-resources.yml
