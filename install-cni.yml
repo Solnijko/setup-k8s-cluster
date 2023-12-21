@@ -20,7 +20,7 @@
             -days 365
         chown $(id -u):$(id -g) cni.crt
 
-    - name: Create kubeconfig file for CNI plugin
+    - name: Create kubeconfig file for CNI plugin (1)
       shell: |
         APISERVER=$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}')
         kubectl config set-cluster kubernetes \
@@ -28,13 +28,17 @@
           --embed-certs=true \
           --server=$APISERVER \
           --kubeconfig=cni.kubeconfig
-        
+
+    - name: Create kubeconfig file for CNI plugin (2)
+      shell: |
         kubectl config set-credentials calico-cni \
           --client-certificate=cni.crt \
           --client-key=cni.key \
           --embed-certs=true \
           --kubeconfig=cni.kubeconfig
         
+    - name: Create kubeconfig file for CNI plugin (3)
+      shell: |
         kubectl config set-context default \
           --cluster=kubernetes \
           --user=calico-cni \
