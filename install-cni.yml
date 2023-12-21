@@ -1,17 +1,20 @@
-- name: Install calicoctl
-  hosts: masters 
-  become: yes
-  tasks:
-    - name: Download calicoctl
-      get_url:
-        url: "https://github.com/projectcalico/calico/releases/download/v3.27.0/calicoctl-linux-amd64"
-        dest: /usr/local/bin/
-        validate_certs: no  
 
-    - name: Change permissions on calicoctl
-      file:
-        path: /usr/local/bin/calicoctl
-        mode: '0755'   
+
+
+# - name: Install calicoctl
+#   hosts: masters 
+#   become: yes
+#   tasks:
+#     - name: Download calicoctl
+#       get_url:
+#         url: "https://github.com/projectcalico/calico/releases/download/v3.27.0/calicoctl-linux-amd64"
+#         dest: /usr/local/bin/
+#         validate_certs: no  
+
+#     - name: Change permissions on calicoctl
+#       file:
+#         path: /usr/local/bin/calicoctl
+#         mode: '0755'   
 
 # - name: Provision Kubernetes user account for the plugin
 #   hosts: masters
