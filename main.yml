@@ -1,7 +1,8 @@
 ---
+# Run playbooks sequentially
 - import_playbook: k8s-pkg.yml
 - import_playbook: k8s-master.yml
 - import_playbook: install-helm.yml
-# - import_playbook: install-cni.yml
+- import_playbook: install-cni.yml
 - import_playbook: k8s-workers.yml
 - import_playbook: k8s-add-roles.yml
