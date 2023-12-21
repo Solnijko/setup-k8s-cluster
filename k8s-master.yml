@@ -37,13 +37,12 @@
         mode: '0700'
     
     - name: Add KUBECONFIG to ~/.bashrc
-        lineinfile:
-          dest: ~/.bashrc
-          line: "export KUBECONFIG=~/.kube/config"
-          insertafter: EOF
-          state: present
-          create: yes
-          
+      lineinfile:
+        path: ~/.bashrc
+        line: "export KUBECONFIG=~/.kube/config"
+        insertafter: EOF
+        state: present
+
     - name: Set KUBECONFIG for the current shell session
       shell: export KUBECONFIG=~/.kube/config
     
