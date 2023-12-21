@@ -1,5 +1,6 @@
 - hosts: masters
   become: yes
   tasks:
+    # Hardcoded it for now, since only one worker node is used on my machine
     - name: Add worker role to worker-node1
       command: kubectl label node worker-node1 node-role.kubernetes.io/worker=worker
