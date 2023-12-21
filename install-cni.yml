@@ -16,8 +16,5 @@
       shell: |
         kubectl create -f https://raw.githubusercontent.com/Solnijko/kubernetes-configs/main/custom-resources.yml
     
-    - name: Remove taints from the control node
-      shell: |
-        kubectl taint nodes --all node-role.kubernetes.io/control-plane-
     
       
