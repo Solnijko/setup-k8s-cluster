@@ -4,4 +4,4 @@
 - import_playbook: install-helm.yml
 - import_playbook: k8s-workers.yml
 - import_playbook: k8s-add-roles.yml
-# - import_playbook: configure-cni.yml
+- import_playbook: install-cni.yml
