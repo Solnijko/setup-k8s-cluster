@@ -1,4 +1,5 @@
-- hosts: masters
+- name: Configure master node
+  hosts: masters
   become: yes
   tasks:     
     - name: Get MASTER_PRIVATE_IP
@@ -21,7 +22,7 @@
       shell: |
         kubeadm config images pull
 
-    - name: Initialize kubeadm
+    - name: Initialize cluster using kubeadm
       shell: kubeadm init --apiserver-advertise-address="{{ MASTER_PRIVATE_IP }}" --apiserver-cert-extra-sans="{{ MASTER_PRIVATE_IP }}" --pod-network-cidr="172.16.10.0/16" --node-name "{{ NODENAME }}" --ignore-preflight-errors Swap
 
     - name: Create .kube directory
@@ -34,7 +35,7 @@
         src: /etc/kubernetes/admin.conf
         dest: "~/.kube/config"
         remote_src: yes
-        mode: '0700'
+        mode: '755'
     
     - name: Add KUBECONFIG to ~/.bashrc
       lineinfile:
