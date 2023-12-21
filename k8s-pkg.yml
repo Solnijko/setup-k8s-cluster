@@ -67,14 +67,26 @@
           net.bridge.bridge-nf-call-iptables  = 1
           net.ipv4.ip_forward                 = 1
         create: yes
-        
+    
+    - name: Add static route for pods CIDR range
+      lineinfile:
+        path: /etc/network/interfaces
+        line: "up ip route add 172.16.10.0/16 via 10.0.2.1"
+        state: present
+
+    - name: Add static route for CIDR subnet
+      lineinfile:
+        path: /etc/network/interfaces
+        line: "up ip route add 10.96.0.0/12 via 10.0.2.1"
+        state: present
+
     - name: Apply sysctl settings
       command: sysctl --system
 
     - name: Disable SWAP 
       shell: |
         swapoff -a
-        
+
     - name: Disable SWAP in fstab 
       lineinfile:
         path: /etc/fstab
