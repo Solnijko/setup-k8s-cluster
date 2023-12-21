@@ -74,11 +74,8 @@
       shell: |
         swapoff -a
 
-    - name: Disable SWAP in fstab 
-      lineinfile:
-        path: /etc/fstab
-        regexp: 'swap'
-        state: absent
+    - name: Add cron job to disable swap on startup
+      command: "(crontab -l 2>/dev/null; echo '@reboot /sbin/swapoff -a') | crontab -"
     
     - name: Remove old docker if already installed
       yum:
