@@ -1,4 +1,5 @@
-- hosts: all
+- name: Prepare k8s cluster
+  hosts: all
   become: yes
   tasks:
     - name: Update yum packages
@@ -148,7 +149,7 @@
       yum:
         name: kubeadm
         state: installed
-    
+
     - name: Remove containerd config /etc/containerd/config.toml
       file:
         path: /etc/containerd/config.toml
