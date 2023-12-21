@@ -33,8 +33,6 @@
     - name: Set context
       command: kubectl config set-context default --cluster=kubernetes --user=calico-cni --kubeconfig=cni.kubeconfig
 
----
-
 - name: Copy cni.kubeconfig to workers
   hosts: workers
   become: yes
@@ -46,7 +44,6 @@
         flat: yes
       delegate_to: master
 
----
 - name: Provision RBAC 
   hosts: masters
   tasks:
@@ -64,7 +61,6 @@
       shell: |
         kubectl create clusterrolebinding calico-cni --clusterrole=calico-cni --user=calico-cni
 
----
 - name: Install CNI plugin
   hosts: all
   become: yes
@@ -107,7 +103,6 @@
       file:
         path: /etc/cni/net.d/calico-kubeconfig
         mode: '0600'
----
 
 - name: Calico network plugin
   hosts: masters
