@@ -46,21 +46,7 @@
       set_fact:
         ansible_shell_env:
           KUBECONFIG: ~/.kube/config
-    
-    - name: Install calico network plugin
-      shell: |
-        kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
-      
-    - name: Download custom resources config
-      get_url:
-        url: "https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml"
-        dest: /tmp/
-        validate_certs: no
-
-    - name: Apply custom resources
-      shell: |
-        kubectl create -f /tmp/custom-resources.yaml
-
+  
     - name: Download metrics server config
       get_url:
         url: "https://raw.githubusercontent.com/techiescamp/kubeadm-scripts/main/manifests/metrics-server.yaml"
