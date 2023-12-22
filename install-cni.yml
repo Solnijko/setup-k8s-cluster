@@ -6,10 +6,5 @@
       shell: |
         kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml 
     
-    - name: Apply custom daemonset 
-      shell: |
-        kubectl apply -f https://raw.githubusercontent.com/Solnijko/kubernetes-configs/main/weave-daemonset-k8s-1.11.yaml
-      
-    
     
       
