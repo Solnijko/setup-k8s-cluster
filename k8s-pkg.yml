@@ -35,8 +35,9 @@
         firewall-cmd --permanent --add-port 65000/tcp
         firewall-cmd --permanent --add-port 179/tcp
         firewall-cmd --permanent --add-port 9153/tcp
+        firewall-cmd --permanent --add-port 6783-6784/tcp
+        firewall-cmd --permanent --add-port 6783/tcp
         firewall-cmd --permanent --add-port 53/tcp
-        firewall-cmd --permanent --add-port 4/tcp
         firewall-cmd --permanent --add-port 4789/udp
         firewall-cmd --permanent --add-port 5473/tcp
         firewall-cmd --permanent --add-port 51820/udp
