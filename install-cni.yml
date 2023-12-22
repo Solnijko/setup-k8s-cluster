@@ -2,19 +2,10 @@
   hosts: masters
   become: yes
   tasks:
-    - name: Download calico.conf
-      get_url:
-        url: "https://raw.githubusercontent.com/Solnijko/kubernetes-configs/main/calico.conf"
-        dest: /etc/NetworkManager/conf.d/
-        validate_certs: no
-    
-    - name: Install the Tigera Calico operator and custom resource definitions
+    - name: Apply weave CNI plugin
       shell: |
-        kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
-    
-    - name: Apply custom resources
-      shell: |
-        kubectl create -f https://raw.githubusercontent.com/Solnijko/kubernetes-configs/main/custom-resources.yml
+        kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml 
+      
     
     
       
