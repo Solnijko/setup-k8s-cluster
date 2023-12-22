@@ -1,9 +1,24 @@
+- name: Wait for master node to be done 
+  hosts: workers 
+  become: yes
+  tasks: 
+    - name: Wait for cni configurations to apply 
+      wait_for:
+        host: master
+        port: 6443
+        state: started
+        delay: 0
+        timeout: 300
+    
+    - name: 30 second delay before joining the cluser
+      pause:
+        seconds: 30
+
 - name: Join worker nodes to cluster
   hosts: master
   become: yes
-  gather_facts: false
   tasks:
-    - name: get join command
+    - name: Get join command
       shell: kubeadm token create --print-join-command
       register: join_command_raw
 
@@ -15,7 +30,7 @@
 - hosts: workers
   become: yes
   tasks:
-    - name: join cluster
+    - name: Join cluster
       shell: "{{ hostvars['master'].join_command }} --ignore-preflight-errors all  >> node_joined.txt"
       args:
         chdir: $HOME
