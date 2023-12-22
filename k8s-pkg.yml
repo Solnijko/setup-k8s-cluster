@@ -1,5 +1,5 @@
 - name: Prepare k8s cluster
-  hosts: workers
+  hosts: all
   become: yes
   tasks:
     - name: Disable SELinux in /etc/selinux/config
@@ -117,6 +117,7 @@
             },
             "storage-driver": "overlay2"
           }
+        create: yes
     
     - name: Reload systemd daemon 
       command: systemctl daemon-reload
