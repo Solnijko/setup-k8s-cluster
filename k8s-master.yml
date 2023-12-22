@@ -37,12 +37,9 @@
         remote_src: yes
         mode: '755'
     
-    - name: Add KUBECONFIG to ~/.bashrc
-      lineinfile:
-        path: ~/.bashrc
-        line: "export KUBECONFIG=~/.kube/config"
-        insertafter: EOF
-        state: present
+    - name: Permanently add kubeconfig variable
+      shell: |
+        echo "export KUBECONFIG=~/.kube/config" >> /etc/profile
 
     - name: Set KUBECONFIG for the current shell session
       shell: export KUBECONFIG=~/.kube/config
