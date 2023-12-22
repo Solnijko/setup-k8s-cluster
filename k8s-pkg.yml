@@ -105,24 +105,16 @@
           - wget
         state: present
 
-    - name: Configure cgroupdriver (Use Docker as CRI)
-      blockinfile:
-        path: /etc/docker/daemon.json
-        block: |
-          {
-            "exec-opts": ["native.cgroupdriver=systemd"],
-            "log-driver": "json-file",
-            "log-opts": {
-              "max-size": "100m"
-            },
-            "storage-driver": "overlay2"
-          }
-        create: yes
+    - name: Configure cgroupdriver (Use containerd as CRI)
+      lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^#?\\s*cgroup_driver\\s*=\\s*".+"'
+        line: 'cgroup_driver = "systemd"'
     
     - name: Reload systemd daemon 
       command: systemctl daemon-reload
 
-    - name: Enable and restart Docker service
+    - name: Enable and start Docker service
       service:
         name: docker
         enabled: yes
@@ -132,7 +124,7 @@
       service:
         name: containerd
         enabled: yes
-        state: started
+        state: restarted
 
     - name: Add Kubernetes yum repository
       yum_repository:
