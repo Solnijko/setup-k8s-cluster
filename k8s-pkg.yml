@@ -22,7 +22,7 @@
 
     - name: Make some space for CoreDNS in resolv.conf
       shell: |
-        echo "nameserver 8.8.8.8" > /resolv.conf
+        echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
     - name: Restart NetworkManager
       service:
