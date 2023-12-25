@@ -21,10 +21,8 @@
         insertafter: '\[main\]'
 
     - name: Make some space for CoreDNS in resolv.conf
-      lineinfile:
-        path: /etc/resolv.conf
-        state: absent
-        regexp: '^(?!nameserver 8.8.8.8).*'
+      shell: |
+        echo "nameserver 8.8.8.8" > /resolv.conf
 
     - name: Restart NetworkManager
       service:
