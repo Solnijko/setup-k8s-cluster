@@ -12,6 +12,24 @@
     - name: Disable SELinux during runtime if not disabled
       command: setenforce 0
       ignore_errors: yes
+    
+    - name: Disable DNS autogeneration for NetworkManager
+      lineinfile:
+        path: /etc/NetworkManager/NetworkManager.conf
+        line: 'dns=none'
+        create: yes
+        insertafter: '\[main\]'
+
+    - name: Make some space for CoreDNS in resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        state: absent
+        regexp: '^(?!nameserver 8.8.8.8).*'
+
+    - name: Restart NetworkManager
+      service:
+        name: NetworkManager
+        state: restarted
 
     - name: Configure firewalld
       shell: |
