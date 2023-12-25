@@ -3,7 +3,7 @@
   become: yes
   tasks:     
     - name: Get MASTER_PRIVATE_IP
-      shell: ip addr show enp0s3 | awk '/inet / {print $2}' | cut -d/ -f1
+      shell: ip addr show enp0s8 | awk '/inet / {print $2}' | cut -d/ -f1
       register: MASTER_PRIVATE_IP_raw
 
     - name: Set MASTER_PRIVATE_IP
