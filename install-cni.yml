@@ -8,6 +8,11 @@
       dest: /etc/NetworkManager/conf.d/
       validate_certs: no
 
+    - name: Restart NetworkManager
+      service:
+        name: NetworkManager
+        state: restarted
+
 - name: Configure CNI network
   hosts: masters
   become: yes
