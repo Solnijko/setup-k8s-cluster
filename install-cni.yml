@@ -1,13 +1,17 @@
-- name: Configure CNI network
-  hosts: masters
+- name: Get calico config
+  hosts: all
   become: yes
   tasks:
     - name: Download calico.conf
-      get_url:
-        url: "https://raw.githubusercontent.com/Solnijko/kubernetes-configs/main/calico.conf"
-        dest: /etc/NetworkManager/conf.d/
-        validate_certs: no
-    
+    get_url:
+      url: "https://raw.githubusercontent.com/Solnijko/kubernetes-configs/main/calico.conf"
+      dest: /etc/NetworkManager/conf.d/
+      validate_certs: no
+
+- name: Configure CNI network
+  hosts: masters
+  become: yes
+  tasks:    
     - name: Install the Tigera Calico operator and custom resource definitions
       shell: |
         kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
