@@ -9,10 +9,6 @@
         state: started
         delay: 0
         timeout: 300
-    
-    - name: 30 second delay before joining the cluser
-      pause:
-        seconds: 30
 
 - name: Join worker nodes to cluster
   hosts: master
